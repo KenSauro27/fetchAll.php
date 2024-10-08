@@ -1,29 +1,22 @@
 <?php
-// Database connection settings
-$host = 'localhost';
-$dbname = 'roles';
-$username = 'root';
-$password = '';
+// Include database connection settings from dbconfig.php
+include 'dbconfig.php';
 
 try {
-    // Connect to the database
-    $conn = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    echo "Connected successfully<br>";
+    // Prepare and execute the SQL query to select all records from the Teachers table
+    $stmt = $conn->query("SELECT * FROM Teachers");
 
-    // Fetch all teachers
-    foreach ($conn->query("SELECT * FROM Teachers") as $teacher) {
-        echo "ID: {$teacher['teacher_id']}, Name: {$teacher['first_name']} {$teacher['last_name']}, Email: {$teacher['email']}<br>";
-    }
+    // Fetch all results as an associative array
+    $teachers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Insert a new student
-    $sql = "INSERT INTO Students (first_name, last_name, date_of_birth, email, teacher_id) 
-            VALUES ('Angela', 'Martin', '1996-10-01', 'angela.martin@example.com', 1)";
-    $conn->exec($sql);
-    echo "New student 'Angela Martin' added.<br>";
-    
+    // Display the results in a readable format within <pre> tags
+    echo "<pre>"; // Opening <pre> tag for formatted output
+    print_r($teachers); // Output the associative array
+    echo "</pre>"; // Closing </pre> tag
 } catch (PDOException $e) {
-    echo "Connection failed. Please try again later.";
-    error_log($e->getMessage());
+    // Handle any database errors
+    echo "Failed to fetch teachers. Please try again later.";
+    error_log($e->getMessage()); // Log the error for debugging
 }
 ?>
+
